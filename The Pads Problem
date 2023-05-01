@@ -1,0 +1,71 @@
+with 
+nme_sort as (
+    SELECT
+        CONCAT(Name,"(",LEFT(Occupation,1),")") AS txt
+    FROM
+        OCCUPATIONS
+    ORDER BY
+        Name
+),
+cnt_doctors as (
+    SELECT
+        CONCAT("There are a total of ", COUNT(Occupation)," doctors.") AS txt
+    FROM
+        OCCUPATIONS
+    WHERE
+        Occupation = "Doctor"
+),
+cnt_singers as (
+    SELECT
+        CONCAT("There are a total of ", COUNT(Occupation)," singers.") AS txt
+    FROM
+        OCCUPATIONS
+    WHERE
+        Occupation = "Singer"
+),
+cnt_actors as (
+    SELECT
+        CONCAT("There are a total of ", COUNT(Occupation)," actors.") AS txt
+    FROM
+        OCCUPATIONS
+    WHERE
+        Occupation = "Actor"
+),
+cnt_professors as (
+    SELECT
+        CONCAT("There are a total of ", COUNT(Occupation)," professors.") AS txt
+    FROM
+        OCCUPATIONS
+    WHERE
+        Occupation = "Professor"
+),
+
+final_cte AS (
+(SELECT
+    txt,
+    ROW_NUMBER() OVER(ORDER BY txt) AS ranker
+FROM
+    nme_sort)
+UNION ALL
+    (SELECT
+        txt, 10001 AS ranker
+    FROM
+        cnt_doctors)
+UNION ALL
+    (SELECT
+        txt, 10002 AS ranker
+    FROM
+        cnt_singers)
+UNION ALL
+    (SELECT
+        txt, 10003 AS ranker
+    FROM
+        cnt_actors)
+UNION ALL
+    (SELECT
+        txt, 10004 AS ranker
+    FROM
+        cnt_professors)
+)
+
+SELECT txt FROM final_cte ORDER BY ranker
